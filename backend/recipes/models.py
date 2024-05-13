@@ -83,7 +83,7 @@ class Recipe(models.Model):
                 1.0, message='Время готовки не может быть меньше 1'),
             MaxValueValidator(
                 32000, message='Время готовки не может быть больше 32000')
-                ]
+            ]
     )
     image = models.ImageField(
         upload_to='api/media/',
@@ -134,7 +134,7 @@ class RecipeIngredient(models.Model):
             MaxValueValidator(
                 32000,
                 message='Количество ингредиентов не может быть больше 32000')
-                ]
+        ]
     )
 
     def __str__(self):

@@ -126,7 +126,7 @@ class IngredientsAmountSerializer(serializers.ModelSerializer):
         validators=[MinValueValidator(
             1.0,
             message='Количество ингредиента не может быть меньше 1')]
-            )
+        )
 
     class Meta:
         model = RecipeIngredient
