@@ -1,16 +1,21 @@
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 
-from api.validation import validate_username
-
-from .constants import EXTENDED_FIELD_LENGTH, STANDARD_FIELD_LENGTH
+from foodgram_backend.constants import STANDARD_FIELD_LENGTH
 
 
 class User(AbstractUser):
     """Переопределенная модель пользователя."""
+    username_validator = UnicodeUsernameValidator()
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = [
+        'username',
+        'first_name',
+        'last_name',
+    ]
 
     email = models.EmailField(
-        max_length=EXTENDED_FIELD_LENGTH,
         unique=True,
         verbose_name='Почта'
     )
@@ -18,7 +23,7 @@ class User(AbstractUser):
         max_length=STANDARD_FIELD_LENGTH,
         unique=True,
         verbose_name='Имя пользователя',
-        validators=(validate_username, )
+        validators=(username_validator, )
     )
     first_name = models.CharField(
         max_length=STANDARD_FIELD_LENGTH,

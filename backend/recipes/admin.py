@@ -1,6 +1,10 @@
 from django.contrib import admin
 
-from .models import Ingredient, Recipe, Tag
+from .models import Ingredient, Recipe, RecipeIngredient, Tag
+
+
+class IngredientInline(admin.TabularInline):
+    model = RecipeIngredient
 
 
 @admin.register(Recipe)
@@ -8,6 +12,7 @@ class RecipeAdmin(admin.ModelAdmin):
     list_display = ('name', 'author', 'is_favorited', 'pub_date')
     search_fields = ('name',)
     list_filter = ('author', 'name', 'tags')
+    inlines = [IngredientInline]
 
     @admin.display(description='Добавлен в избранное')
     def is_favorited(self, obj):

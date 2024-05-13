@@ -1,7 +1,10 @@
+from colorfield.fields import ColorField
 from django.contrib.auth import get_user_model
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-from users.constants import STANDARD_FIELD_LENGTH
+from foodgram_backend.constants import (MEDIUM_FIELD_LENGTH,
+                                        STANDARD_FIELD_LENGTH)
 
 User = get_user_model()
 
@@ -12,9 +15,10 @@ class Tag(models.Model):
     name = models.CharField(
         verbose_name='Название тега',
         unique=True,
-        max_length=STANDARD_FIELD_LENGTH
+        max_length=MEDIUM_FIELD_LENGTH
     )
-    color = models.CharField(
+    color = ColorField(
+        format='hex',
         verbose_name='Цвет',
         unique=True,
         max_length=STANDARD_FIELD_LENGTH
@@ -22,7 +26,7 @@ class Tag(models.Model):
     slug = models.SlugField(
         verbose_name='Слаг',
         unique=True,
-        max_length=STANDARD_FIELD_LENGTH
+        max_length=MEDIUM_FIELD_LENGTH
     )
 
     class Meta:
@@ -38,16 +42,20 @@ class Ingredient(models.Model):
 
     name = models.CharField(
         verbose_name='Название ингрeдиента',
-        max_length=STANDARD_FIELD_LENGTH
+        max_length=MEDIUM_FIELD_LENGTH
     )
     measurement_unit = models.CharField(
         verbose_name='Единицы измерения',
-        max_length=STANDARD_FIELD_LENGTH
+        max_length=MEDIUM_FIELD_LENGTH
     )
 
     class Meta:
         verbose_name = 'ингрeдиент'
         verbose_name_plural = 'Ингрeдиенты'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'measurement_unit'],
+                name='unique_ingredient_name_unit')]
 
     def __str__(self):
         return f'{self.name}, {self.measurement_unit}'
@@ -56,7 +64,10 @@ class Ingredient(models.Model):
 class Recipe(models.Model):
     """Модель рецепта."""
 
-    name = models.CharField(max_length=200, verbose_name='Название рецепта')
+    name = models.CharField(
+        max_length=MEDIUM_FIELD_LENGTH,
+        verbose_name='Название рецепта'
+    )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -66,7 +77,13 @@ class Recipe(models.Model):
     text = models.TextField(verbose_name='Описание')
     cooking_time = models.PositiveSmallIntegerField(
         verbose_name='Время приготовления',
-        help_text='Введите время приготовления блюда в минутах.'
+        help_text='Введите время приготовления блюда в минутах.',
+        validators=[
+            MinValueValidator(
+                1.0, message='Время готовки не может быть меньше 1'),
+            MaxValueValidator(
+                32000, message='Время готовки не может быть больше 32000')
+                ]
     )
     image = models.ImageField(
         upload_to='api/media/',
@@ -109,7 +126,16 @@ class RecipeIngredient(models.Model):
         verbose_name='Ингрeдиент',
         related_name='recipe_ingredients'
     )
-    amount = models.PositiveIntegerField(verbose_name='Количество')
+    amount = models.PositiveIntegerField(
+        verbose_name='Количество',
+        validators=[
+            MinValueValidator(
+                1.0, message='Количество ингредиентов не может быть меньше 1'),
+            MaxValueValidator(
+                32000,
+                message='Количество ингредиентов не может быть больше 32000')
+                ]
+    )
 
     def __str__(self):
         return f'{self.ingredient} - {self.recipe}'
