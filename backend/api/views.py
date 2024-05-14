@@ -62,14 +62,11 @@ class SubscriveViewSet(CreateListDestroyViewSet):
         """Метод создания подписки."""
         subscribe = get_object_or_404(User, id=self.kwargs['user_id'])
         serializer = SubscribeSerializer(
-            data={'user': request.user, 'subscribe': subscribe},
+            data={'user': request.user.id, 'subscribe': subscribe.id},
             context={'request': request})
         serializer.is_valid(raise_exception=True)
-        serializer.save(user=self.request.user, subscribe=subscribe)
-        return Response(CustomUserFullSerializer(
-            get_object_or_404(User, pk=self.kwargs['user_id']),
-            context={'request': request}).data,
-            status=status.HTTP_201_CREATED)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, *args, **kwargs):
         """Метод удаления подписки."""

@@ -3,8 +3,8 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-from foodgram_backend.constants import (MEDIUM_FIELD_LENGTH,
-                                        STANDARD_FIELD_LENGTH)
+from foodgram_backend.constants import (
+    MEDIUM_FIELD_LENGTH, MIN_VALIDATOR_NUM, MAX_VALIDATOR_NUM)
 
 User = get_user_model()
 
@@ -20,8 +20,7 @@ class Tag(models.Model):
     color = ColorField(
         format='hex',
         verbose_name='Цвет',
-        unique=True,
-        max_length=STANDARD_FIELD_LENGTH
+        unique=True
     )
     slug = models.SlugField(
         verbose_name='Слаг',
@@ -80,9 +79,15 @@ class Recipe(models.Model):
         help_text='Введите время приготовления блюда в минутах.',
         validators=[
             MinValueValidator(
-                1.0, message='Время готовки не может быть меньше 1'),
+                MIN_VALIDATOR_NUM,
+                message=('Время готовки не может быть меньше '
+                         f'{MIN_VALIDATOR_NUM}')
+            ),
             MaxValueValidator(
-                32000, message='Время готовки не может быть больше 32000')
+                MAX_VALIDATOR_NUM,
+                message=(f'Время готовки не может быть больше '
+                         f'{MAX_VALIDATOR_NUM}')
+            )
         ]
     )
     image = models.ImageField(
@@ -130,10 +135,15 @@ class RecipeIngredient(models.Model):
         verbose_name='Количество',
         validators=[
             MinValueValidator(
-                1.0, message='Количество ингредиентов не может быть меньше 1'),
+                MIN_VALIDATOR_NUM,
+                message=('Количество ингредиентов не может быть меньше '
+                         f'{MIN_VALIDATOR_NUM}')
+            ),
             MaxValueValidator(
-                32000,
-                message='Количество ингредиентов не может быть больше 32000')
+                MAX_VALIDATOR_NUM,
+                message=(f'Количество ингредиентов не может быть больше '
+                         f'{MAX_VALIDATOR_NUM}')
+            )
         ]
     )
 

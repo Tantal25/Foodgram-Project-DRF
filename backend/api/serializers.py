@@ -8,7 +8,6 @@ from rest_framework import serializers
 from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
                             ShoppingCart, Tag)
 from users.models import Subscription
-from .utils import recipe_ingredient_create
 
 User = get_user_model()
 
@@ -68,17 +67,17 @@ class CustomUserFullSerializer(CustomUserShortSerializer):
 class SubscribeSerializer(serializers.ModelSerializer):
     """Сериализатор для работы с подписками пользователей."""
 
-    user = serializers.PrimaryKeyRelatedField(
-        read_only=True,
-        default=serializers.CurrentUserDefault())
-    subscribe = serializers.PrimaryKeyRelatedField(read_only=True)
-
     class Meta:
         model = Subscription
         fields = ('user', 'subscribe')
 
+    def to_representation(self, instance):
+        return CustomUserFullSerializer(
+            instance.subscribe,
+            context={'request': self.context.get('request')}).data
+
     def validate(self, data):
-        if self.context['request'].user == self.initial_data['subscribe']:
+        if self.context['request'].user == data['subscribe']:
             raise serializers.ValidationError('Нельзя подписаться на себя')
         if Subscription.objects.filter(
             user=self.context['request'].user,
@@ -121,7 +120,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 class IngredientsAmountSerializer(serializers.ModelSerializer):
     """Сериализатор для модели рецепта-ингредиента с добавлением количества."""
 
-    id = serializers.IntegerField()
+    id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
     amount = serializers.IntegerField(
         validators=[MinValueValidator(
             1.0,
@@ -191,10 +190,6 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
                 'Нужен хотя бы один ингредиент для рецепта')
         ingredient_list = []
         for ingredient in data['ingredients']:
-            ingredient_exist = Ingredient.objects.filter(id=ingredient['id'])
-            if not ingredient_exist:
-                raise serializers.ValidationError(
-                    'Такого ингредиента не существует')
             if ingredient['id'] in ingredient_list:
                 raise serializers.ValidationError(
                     'Ингредиенты не должны повторяться')
@@ -227,7 +222,7 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
             author=self.context['request'].user,
             **validated_data)
         recipe.tags.set(tags)
-        recipe_ingredient_create(ingredients, instance=recipe)
+        self.recipe_ingredient_create(ingredients, recipe)
         return recipe
 
     def update(self, instance, validated_data):
@@ -235,8 +230,17 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
         instance.ingredients.clear()
         tags = validated_data.pop('tags')
         instance.tags.set(tags)
-        recipe_ingredient_create(ingredients, instance)
+        self.recipe_ingredient_create(ingredients, recipe=instance)
         return instance
+
+    def recipe_ingredient_create(self, ingredients, recipe):
+        """Метод который создает связь ингредиентов с рецептом."""
+        for ingredient in ingredients:
+            RecipeIngredient(
+                ingredient_id=ingredient['id'],
+                recipe=recipe,
+                amount=ingredient['amount']
+            )
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
