@@ -117,12 +117,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
             permission_classes=(IsAuthenticated, ))
     def favorite(self, request, pk):
         """Метод добавления и удаления рецепта в избранном."""
-        recipe = Recipe.objects.filter(pk=pk).first()
-        if not recipe:
-            return Response('Данного рецепта не существует',
-                            status=status.HTTP_400_BAD_REQUEST)
         serializer = FavoriteSerializer(
-            data={'recipe': recipe.id, 'user': request.user.id},
+            data={'recipe': pk, 'user': request.user.id},
             context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -141,12 +137,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
             permission_classes=(IsAuthenticated,))
     def shopping_cart(self, request, pk):
         """Метод добавления и удаления рецепта в списке покупок."""
-        recipe = Recipe.objects.filter(pk=pk).first()
-        if not recipe:
-            return Response('Данного рецепта не существует',
-                            status=status.HTTP_400_BAD_REQUEST)
         serializer = ShoppingCartSerializer(
-            data={'recipe': recipe.id, 'user': request.user.id},
+            data={'recipe': pk, 'user': request.user.id},
             context={'request': request})
         serializer.is_valid(raise_exception=True)
         serializer.save()

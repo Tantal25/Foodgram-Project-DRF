@@ -233,11 +233,12 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
         self.recipe_ingredient_create(ingredients, recipe=instance)
         return instance
 
-    def recipe_ingredient_create(self, ingredients, recipe):
+    @staticmethod
+    def recipe_ingredient_create(ingredients, recipe):
         """Метод который создает связь ингредиентов с рецептом."""
         for ingredient in ingredients:
-            RecipeIngredient(
-                ingredient_id=ingredient['id'],
+            RecipeIngredient.objects.create(
+                ingredient=ingredient['id'],
                 recipe=recipe,
                 amount=ingredient['amount']
             )
