@@ -147,10 +147,3 @@ DELETE /api/recipes/id/favorite/
 ```
 
 ### Автор проекта: Трахимец Вадим (Tantal250@yandex.ru)
-
-
-Адрес проекта: foodgram-practicum.ddns.net
-
-Логин для обычного юзера: Test05
-Почта администратора: Test05@yandex.ru
-Пароль для администратора: test24680!
