@@ -5,7 +5,7 @@ Foodgram - это проект в котором пользователи мог
 Проект реализован на нескольких докер контейнерах (фронтенд, бэкенд, nginx и база данных) которые объеденены в одну сеть для взаимодействия.
 
 ## Технологии
-Бекэнд реализован с помощью: Python, Django, Django REST framework, Djoser, PostgreSQL, NGINX, Gunicorn, Docker.
+Бэкенд реализован с помощью: Python, Django, Django REST framework, Djoser, PostgreSQL, NGINX, Gunicorn, Docker.
 
 ## Как развернуть проект
 ```
