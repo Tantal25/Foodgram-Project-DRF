@@ -24,6 +24,8 @@ Linux: source venv/bin/activate
 3. Устанавливаем менеджер пактов pip и зависимости
 
 python -m pip install --upgrade pip
+
+Переходим в папку backend в терминале и выполняем команду
 pip install -r requirements.txt
 ```
 ```
