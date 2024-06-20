@@ -26,6 +26,7 @@ Linux: source venv/bin/activate
 python -m pip install --upgrade pip
 
 Переходим в папку backend в терминале и выполняем команду
+
 pip install -r requirements.txt
 ```
 ```
@@ -42,7 +43,7 @@ SECRET_KEY            Cекретный код проекта для settings
 ENGINE                Тип базы данных для использования в проекте (сервер опробован на SQLite и PostgreSQL)
 ```
 ```
-5. Создаем Docker контейнеры (!!! вместо username - ваш логин на DockerHub !!!)
+5. Создаем Docker контейнеры (вместо username - ваш логин на DockerHub)
 Перейти в терминале в папку backend (из корневой директории команда cd backend)
 docker build -t username/foodgram_backend .
 Перейти в терминале в папку frontend (из корневой директории команда cd frontend)
@@ -51,7 +52,7 @@ docker build -t username/foodgram_frontend .
 docker build -t username/foodgram_infra .
 ```
 ```
-6. Выгрузить образы в DockerHub (!!! вместо username - ваш логин на DockerHub !!!)
+6. Выгрузить образы в DockerHub (вместо username - ваш логин на DockerHub)
 docker push username/foodgram_backend
 docker push username/foodgram_frontend
 docker push username/foodgram_nginx
