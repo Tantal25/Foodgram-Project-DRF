@@ -55,7 +55,7 @@ docker build -t username/foodgram_infra .
 6. Выгрузить образы в DockerHub (вместо username - ваш логин на DockerHub)
 docker push username/foodgram_backend
 docker push username/foodgram_frontend
-docker push username/foodgram_nginx
+docker push username/foodgram_infra
 ```
 ```
 7. Запустить проект в контейнерах
@@ -63,7 +63,7 @@ docker push username/foodgram_nginx
 docker compose up --build
 ```
 ```
-8. Запустить отдельный терминал и из него выполнить пункты 9, 10, 11
+8. Запустить отдельный терминал, перейти в нем в проект в папку infra и из неe выполнить пункты 9, 10, 11
 ```
 ```
 9. Выполнить миграции в отдельном терминале (из папки infra)
@@ -83,8 +83,9 @@ docker compose exec backend python manage.py collectstatic
 docker compose exec backend cp -r ./collected_static/. ./backend_static/static/
 ```
 
-### Документация к проекту доступна по адресу:
-http://localhost/api/docs/
+### Проект будет доступен по адресу:
+
+http://127.0.0.1:8000/
 
 
 ### Примеры запросов к API
